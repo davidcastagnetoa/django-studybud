@@ -1,1 +1,44 @@
-https://youtu.be/PtQiiknWUcI?si=6F_E0yCwcFOuWJom&t=16761# django-studybud
+# django-studybud
+
+This application, developed in Python using the Django framework, allows users to create study rooms centered around a variety of subjects. It is inspired and built upon an in-depth tutorial by Traversy Media. You can view the tutorial at: https://www.youtube.com/watch?v=PtQiiknWUcI&t
+
+## Prerequisites
+
+- Python 3.x
+- pip
+
+## Installation
+
+1. **Clone the Repository**
+
+   ```
+   git clone https://github.com/davidcastagnetoa/django-studybud.git
+   cd django-studybud
+   ```
+
+2. **Set Up a Virtual Environment (optional, but recommended)**
+
+   ```
+   python -m venv venv
+   source venv/bin/activate  # En Windows usa: venv\Scripts\activate
+   ```
+
+3. **Install Dependencies**
+
+   ```
+   pip install -r requirements.txt
+   ```
+
+## Execution
+
+1. Perform initial migrations:
+
+   ```
+   python manage.py migrate
+   ```
+
+2. Start the development server:
+
+   ```
+   python manage.py runserver
+   ```
