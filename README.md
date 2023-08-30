@@ -1,6 +1,6 @@
 # django-studybud
 
-This application, developed in Python using the Django framework, allows users to create study rooms centered around a variety of subjects. It is inspired and built upon an in-depth tutorial by Traversy Media. You can view the tutorial at: https://www.youtube.com/watch?v=PtQiiknWUcI&t
+This application, developed in Python using the Django framework, allows users to create study rooms centered around a variety of subjects. It is inspired and built upon an in-depth tutorial by Traversy Media. You can view the tutorial at: https://www.youtube.com/watch?v=PtQiiknWUcI&t=19802
 
 ## Prerequisites
 
@@ -23,9 +23,10 @@ This application, developed in Python using the Django framework, allows users t
    source venv/bin/activate  # En Windows usa: venv\Scripts\activate
    ```
 
-3. **Install Dependencies**
+3. **Install Django and Dependencies**
 
    ```
+   pip install django
    pip install -r requirements.txt
    ```
 
