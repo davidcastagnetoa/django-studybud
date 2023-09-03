@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 import os
-
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -42,18 +41,32 @@ INSTALLED_APPS = [
 
     'base.apps.BaseConfig',
 
-    'rest_framework'
+    'rest_framework',
+    # FOR API cors
+    "corsheaders",
 ]
+
+# # USER MODEL
+# AUTH_USER_MODEL = 'base.User'
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    # FOR API cors
+    "corsheaders.middleware.CorsMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # FOR API cors
+    "django.middleware.common.CommonMiddleware",
 ]
+
+
+# FOR API
+CORS_ALLOW_ALL_ORIGINS = True
 
 ROOT_URLCONF = 'studybuddy.urls'
 
@@ -138,3 +151,8 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# For User Profile Image
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')

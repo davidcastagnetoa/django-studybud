@@ -4,10 +4,11 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.contrib.auth.models import User
+from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
-from .models import Room, Topic, Message
-from .forms import RoomForm, UserForm
+from .models import Room, Topic, Message, UserProfile
+from .forms import RoomForm, UserForm, UserProfileForm
 
 
 def loginPage(request):
@@ -61,20 +62,39 @@ def registerPage(request):
     return render(request, 'base/login_register.html', {'form': form})
 
 
+# def home(request):
+#     query = request.GET.get('query') if request.GET.get(
+#         'query') != None else ''
+
+#     rooms = Room.objects.filter(
+#         Q(topic__name__icontains=query) |
+#         Q(name__icontains=query) |
+#         Q(description__icontains=query)
+#     )
+
+#     topic = Topic.objects.all()[0:5]
+#     room_count = rooms.count()
+#     room_messages = Message.objects.filter(
+#         Q(room__topic__name__icontains=query))[0:4]
+
+#     context = {'rooms': rooms, 'topics': topic,
+#                'room_count': room_count, 'room_messages': room_messages}
+#     return render(request, 'base/home.html', context)
+
+
 def home(request):
-    query = request.GET.get('query') if request.GET.get(
-        'query') != None else ''
+    query = request.GET.get('query') if request.GET.get('query') != None else ''
 
     rooms = Room.objects.filter(
         Q(topic__name__icontains=query) |
         Q(name__icontains=query) |
         Q(description__icontains=query)
-    )
+    ).select_related('host__userprofile')
 
     topic = Topic.objects.all()[0:5]
     room_count = rooms.count()
     room_messages = Message.objects.filter(
-        Q(room__topic__name__icontains=query))[0:4]
+        Q(room__topic__name__icontains=query)).select_related('user__userprofile')[0:4]
 
     context = {'rooms': rooms, 'topics': topic,
                'room_count': room_count, 'room_messages': room_messages}
@@ -107,8 +127,18 @@ def userProfile(request, pk):
     room_messages = user.message_set.all()
     topics = Topic.objects.all()
 
-    context = {'user': user, 'rooms': rooms,
-               'room_messages': room_messages, 'topics': topics}
+    # Verificamos si el usuario tiene una imagen de perfil
+    has_image = False
+    if hasattr(user, 'userprofile') and user.userprofile.profile_image:
+        has_image = user.userprofile.profile_image.url
+
+    context = {
+        'user': user, 
+        'rooms': rooms,
+        'room_messages': room_messages, 
+        'topics': topics, 
+        'has_image': has_image
+        }
     return render(request, 'base/profile.html', context)
 
 
@@ -193,18 +223,38 @@ def deleteMessage(request, pk):
     return render(request, 'base/delete.html', {'obj': message})
 
 
+# @login_required(login_url='login')
+# def updateUser(request):
+#     user = request.user
+#     form = UserForm(instance=user)
+
+#     if request.method == 'POST':
+#         form = UserForm(request.POST, instance=user)
+#         if form.is_valid():
+#             form.save()
+#             return redirect('user-profile', pk=user.id)
+
+#     return render(request, 'base/update-user.html', {'form': form})
+
 @login_required(login_url='login')
 def updateUser(request):
     user = request.user
+    profile, created = UserProfile.objects.get_or_create(user=user)
     form = UserForm(instance=user)
+    profile_form = UserProfileForm(instance=profile)
 
     if request.method == 'POST':
         form = UserForm(request.POST, instance=user)
-        if form.is_valid():
+        profile_form = UserProfileForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid() and profile_form.is_valid():
+            print(request.FILES)  # para ver si la imagen se envió correctamente
             form.save()
+            profile_form.save()
+            if profile.profile_image:
+                print(profile.profile_image.path)  # para verificar la ruta donde se supone que se guardará la imagen
             return redirect('user-profile', pk=user.id)
 
-    return render(request, 'base/update-user.html', {'form': form})
+    return render(request, 'base/update-user.html', {'form': form, 'profile_form': profile_form})
 
 
 def topicsPage(request):
@@ -215,7 +265,13 @@ def topicsPage(request):
     return render(request, 'base/topics.html', {'topics': topics})
 
 
+# def activityPage(request):
+#     room_messages = Message.objects.all()
+#     context = {'room_messages': room_messages}
+#     return render(request, 'base/activity.html', context)
+
 def activityPage(request):
-    room_messages = Message.objects.all()
+    # Usamos select_related para obtener User y UserProfile en la misma consulta
+    room_messages = Message.objects.all().select_related('user__userprofile')
     context = {'room_messages': room_messages}
     return render(request, 'base/activity.html', context)

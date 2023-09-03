@@ -22,13 +22,15 @@
         </div>
       </div>
       <div class="layout__body">
-        <form class="form" action="" method="POST">
+        <form class="form" action="" method="POST" enctype="multipart/form-data">
           {% csrf_token %} {% for field in form %}
           <div class="form__group">
-            <label for="profile_pic">{{fiel.label}}</label>
+            <label for="profile_pic">{{field.label}}</label>
             {{field}}
           </div>
           {% endfor %}
+          <label for="profile_image">Profile Image</label>
+          {{ profile_form.profile_image }}
 
           <div class="form__action">
             <a class="btn btn--dark" href="{% url 'home' %}">Cancel</a>

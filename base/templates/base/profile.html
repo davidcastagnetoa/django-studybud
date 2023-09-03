@@ -1,7 +1,4 @@
-{% extends 'main.html' %}
-
-{% block content %}
-
+{% extends 'main.html' %} {% block content %} {% load static %}
 <main class="profile-page layout layout--3">
   <div class="container">
     <!-- Topics Start -->
@@ -13,11 +10,16 @@
       <div class="profile">
         <div class="profile__avatar">
           <div class="avatar avatar--large active">
-            <img src="https://randomuser.me/api/portraits/men/11.jpg" />
+            <!-- prettier-ignore -->
+            {% if user.userprofile.profile_image %}
+            <img src="{{ user.userprofile.profile_image.url }}" alt="Current Profile Image" />
+            {% else %}
+            <img src="{% static 'images/avatar.svg' %}" alt="Default Profile Image" />
+            {% endif %}
           </div>
         </div>
         <div class="profile__info">
-          <h3>{{user.username}}</h3>
+          <h3>{{user.first_name}} {{user.last_name}}</h3>
           <p>@{{user.username}}</p>
 
           {% if request.user == user %}
@@ -26,18 +28,18 @@
         </div>
         <div class="profile__about">
           <h3>About</h3>
+          <span>{{user.email}}</span>
           <p>
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequuntur illo tenetur
-            facilis sunt nemo debitis quisquam hic atque aut? Ducimus alias placeat optio
-            accusamus repudiandae quis ab ex exercitationem rem?
+            facilis sunt nemo debitis quisquam hic atque aut? Ducimus alias placeat optio accusamus
+            repudiandae quis ab ex exercitationem rem?
           </p>
         </div>
       </div>
 
       <div class="roomList__header">
         <div>
-          <h2>Study Rooms Hosted by {{user.username}}</a>
-          </h2>
+          <h2>Study Rooms Hosted by {{user.username}}</h2>
         </div>
       </div>
 
